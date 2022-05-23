@@ -309,7 +309,7 @@ select cus_name, CUS_GENDER from customer where cus_name like 'A%' or cus_name l
 
 #9) Create a stored procedure to display supplier id, name, rating and Type_of_Service. For Type_of_Service, If rating =5, print “Excellent Service”,If rating = 4 print “Good Service”, If rating >2 print “Average Service” else print “Poor Service”.
 
-#SQL QUERY without procedure
+#SQL QUERY without procedure to genrate type of service
 SELECT *,
 CASE WHEN RAT_RATSTARS = 5 THEN 'Excellent Service'
 WHEN RAT_RATSTARS = 4 THEN 'Good Service'
@@ -317,6 +317,18 @@ WHEN RAT_RATSTARS > 2 THEN 'Average Service'
 ELSE 'Poor Service'
 END AS Type_Of_Service
 FROM RATING;
+
+#Full sql query
+
+select s.supp_id,s.supp_name,r.RAT_RATSTARS, 
+CASE WHEN R.RAT_RATSTARS = 5 THEN 'Excellent Service'
+WHEN R.RAT_RATSTARS = 4 THEN 'Good Service'
+WHEN R.RAT_RATSTARS > 2 THEN 'Average Service'
+ELSE 'Poor Service'
+END AS Type_Of_Service
+from rating r join orders o on
+r.ord_id = o.ord_id join supplier_pricing sp on o.pricing_id = sp.pricing_id
+join supplier s on sp.supp_id = s.supp_id;
 
 #With Procedure:
 
@@ -325,14 +337,15 @@ drop procedure if exists Type_of_Service;
 DELIMITER &&
 Create Procedure Type_of_Service ()
 Begin
-SELECT *,
-CASE WHEN RAT_RATSTARS = 5 THEN 'Excellent Service'
-WHEN RAT_RATSTARS = 4 THEN 'Good Service'
-WHEN RAT_RATSTARS > 2 THEN 'Average Service'
+select s.supp_id,s.supp_name,r.RAT_RATSTARS, 
+CASE WHEN R.RAT_RATSTARS = 5 THEN 'Excellent Service'
+WHEN R.RAT_RATSTARS = 4 THEN 'Good Service'
+WHEN R.RAT_RATSTARS > 2 THEN 'Average Service'
 ELSE 'Poor Service'
 END AS Type_Of_Service
-FROM RATING;
-End &&
+from rating r join orders o on
+r.ord_id = o.ord_id join supplier_pricing sp on o.pricing_id = sp.pricing_id
+join supplier s on sp.supp_id = s.supp_id;End &&
 
 DELIMITER ;
 
